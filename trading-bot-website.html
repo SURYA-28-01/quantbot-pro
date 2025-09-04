@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantBot Pro - Advanced Trading Bot Backtesting Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>QuantBot Pro</h2>
+                <span class="nav-subtitle">Professional Trading Bot Backtesting Platform</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#backtest">Backtest</a></li>
+                <li><a href="#optimization">Optimization</a></li>
+                <li><a href="#analytics">Analytics</a></li>
+                <li><a href="#settings">Settings</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section id="dashboard" class="section active">
+            <div class="section-header">
+                <h1>Trading Bot Dashboard</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="uploadStrategy()">Upload Strategy</button>
+                    <button class="btn btn-secondary" onclick="uploadData()">Upload Data</button>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>Portfolio Overview</h3>
+                    <div class="metric">
+                        <span class="metric-value" id="totalReturn">+24.7%</span>
+                        <span class="metric-label">Total Return</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value" id="sharpeRatio">1.85</span>
+                        <span class="metric-label">Sharpe Ratio</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value" id="maxDrawdown">-8.2%</span>
+                        <span class="metric-label">Max Drawdown</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Active Strategies</h3>
+                    <div class="strategy-list">
+                        <div class="strategy-item">
+                            <span class="strategy-name">Mean Reversion v2.1</span>
+                            <span class="strategy-status active">Running</span>
+                        </div>
+                        <div class="strategy-item">
+                            <span class="strategy-name">Momentum Scanner</span>
+                            <span class="strategy-status paused">Paused</span>
+                        </div>
+                        <div class="strategy-item">
+                            <span class="strategy-name">Arbitrage Bot</span>
+                            <span class="strategy-status active">Running</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card full-width">
+                    <h3>Performance Chart</h3>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+
+                <div class="card">
+                    <h3>Risk Metrics</h3>
+                    <div class="risk-gauge">
+                        <canvas id="riskGauge"></canvas>
+                        <div class="gauge-value">
+                            <span class="gauge-number">7.2</span>
+                            <span class="gauge-label">Risk Score</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Recent Trades</h3>
+                    <div class="trades-list">
+                        <div class="trade-item">
+                            <span class="trade-symbol">AAPL</span>
+                            <span class="trade-action buy">BUY</span>
+                            <span class="trade-profit">+$247</span>
+                        </div>
+                        <div class="trade-item">
+                            <span class="trade-symbol">TSLA</span>
+                            <span class="trade-action sell">SELL</span>
+                            <span class="trade-profit">+$892</span>
+                        </div>
+                        <div class="trade-item">
+                            <span class="trade-symbol">NVDA</span>
+                            <span class="trade-action buy">BUY</span>
+                            <span class="trade-profit">-$156</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="backtest" class="section">
+            <div class="section-header">
+                <h1>Backtesting Engine</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="runBacktest()">Run Backtest</button>
+                    <button class="btn btn-secondary" onclick="saveBacktest()">Save Configuration</button>
+                </div>
+            </div>
+
+            <div class="backtest-container">
+                <div class="backtest-config">
+                    <div class="card">
+                        <h3>Strategy Configuration</h3>
+                        <div class="form-group">
+                            <label for="strategyFile">Strategy File</label>
+                            <div class="file-upload">
+                                <input type="file" id="strategyFile" accept=".py,.cpp,.js,.java,.r">
+                                <button class="file-upload-btn">Choose File</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dataFile">Historical Data</label>
+                            <div class="file-upload">
+                                <input type="file" id="dataFile" accept=".csv,.json,.xlsx">
+                                <button class="file-upload-btn">Choose File</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="timeRange">Backtest Period</label>
+                            <div class="date-range">
+                                <input type="date" id="startDate" value="2020-01-01">
+                                <input type="date" id="endDate" value="2023-12-31">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="initialCapital">Initial Capital</label>
+                            <input type="number" id="initialCapital" value="100000" min="1000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="riskModel">Risk Model</label>
+                            <select id="riskModel">
+                                <option value="var">Value at Risk (VaR)</option>
+                                <option value="cvar">Conditional VaR</option>
+                                <option value="kelly">Kelly Criterion</option>
+                                <option value="custom">Custom Risk Model</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Advanced Parameters</h3>
+                        <div class="form-group">
+                            <label for="commissionRate">Commission Rate (%)</label>
+                            <input type="number" id="commissionRate" value="0.1" step="0.01" min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="slippageModel">Slippage Model</label>
+                            <select id="slippageModel">
+                                <option value="linear">Linear</option>
+                                <option value="square_root">Square Root</option>
+                                <option value="fixed">Fixed</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maxPositions">Max Concurrent Positions</label>
+                            <input type="number" id="maxPositions" value="10" min="1" max="100">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="benchmarkIndex">Benchmark</label>
+                            <select id="benchmarkIndex">
+                                <option value="sp500">S&P 500</option>
+                                <option value="nasdaq">NASDAQ</option>
+                                <option value="russell2000">Russell 2000</option>
+                                <option value="custom">Custom Benchmark</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="backtest-results">
+                    <div class="card">
+                        <h3>Backtest Results</h3>
+                        <div id="backtestResults" class="results-container">
+                            <div class="results-placeholder">
+                                <i class="icon-chart"></i>
+                                <p>Run a backtest to see results</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="optimization" class="section">
+            <div class="section-header">
+                <h1>Strategy Optimization</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="runOptimization()">Optimize Strategy</button>
+                    <button class="btn btn-secondary" onclick="generateReport()">Generate Report</button>
+                </div>
+            </div>
+
+            <div class="optimization-container">
+                <div class="card">
+                    <h3>Parameter Optimization</h3>
+                    <div class="param-grid">
+                        <div class="param-item">
+                            <label>Moving Average Period</label>
+                            <div class="param-range">
+                                <input type="range" min="5" max="200" value="20" id="maRange">
+                                <span id="maValue">20</span>
+                            </div>
+                        </div>
+                        <div class="param-item">
+                            <label>RSI Threshold</label>
+                            <div class="param-range">
+                                <input type="range" min="10" max="90" value="70" id="rsiRange">
+                                <span id="rsiValue">70</span>
+                            </div>
+                        </div>
+                        <div class="param-item">
+                            <label>Stop Loss %</label>
+                            <div class="param-range">
+                                <input type="range" min="1" max="20" value="5" id="stopLossRange">
+                                <span id="stopLossValue">5%</span>
+                            </div>
+                        </div>
+                        <div class="param-item">
+                            <label>Take Profit %</label>
+                            <div class="param-range">
+                                <input type="range" min="5" max="50" value="15" id="takeProfitRange">
+                                <span id="takeProfitValue">15%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Optimization Methods</h3>
+                    <div class="optimization-methods">
+                        <div class="method-item">
+                            <input type="radio" name="optimization" id="grid" value="grid" checked>
+                            <label for="grid">Grid Search</label>
+                        </div>
+                        <div class="method-item">
+                            <input type="radio" name="optimization" id="genetic" value="genetic">
+                            <label for="genetic">Genetic Algorithm</label>
+                        </div>
+                        <div class="method-item">
+                            <input type="radio" name="optimization" id="bayesian" value="bayesian">
+                            <label for="bayesian">Bayesian Optimization</label>
+                        </div>
+                        <div class="method-item">
+                            <input type="radio" name="optimization" id="pso" value="pso">
+                            <label for="pso">Particle Swarm Optimization</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card full-width">
+                    <h3>Optimization Progress</h3>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="optimizationProgress"></div>
+                        </div>
+                        <div class="progress-stats">
+                            <span id="currentIteration">0</span> / <span id="totalIterations">1000</span> iterations
+                        </div>
+                    </div>
+                    <canvas id="optimizationChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="analytics" class="section">
+            <div class="section-header">
+                <h1>Advanced Analytics</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="generateAnalysis()">Generate Analysis</button>
+                    <button class="btn btn-secondary" onclick="exportReport()">Export Report</button>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="card">
+                    <h3>Performance Metrics</h3>
+                    <table class="metrics-table">
+                        <tr>
+                            <td>Total Return</td>
+                            <td class="metric-value positive">+24.7%</td>
+                        </tr>
+                        <tr>
+                            <td>Annualized Return</td>
+                            <td class="metric-value positive">+18.3%</td>
+                        </tr>
+                        <tr>
+                            <td>Volatility</td>
+                            <td class="metric-value">12.4%</td>
+                        </tr>
+                        <tr>
+                            <td>Sharpe Ratio</td>
+                            <td class="metric-value positive">1.85</td>
+                        </tr>
+                        <tr>
+                            <td>Sortino Ratio</td>
+                            <td class="metric-value positive">2.31</td>
+                        </tr>
+                        <tr>
+                            <td>Calmar Ratio</td>
+                            <td class="metric-value positive">2.23</td>
+                        </tr>
+                        <tr>
+                            <td>Max Drawdown</td>
+                            <td class="metric-value negative">-8.2%</td>
+                        </tr>
+                        <tr>
+                            <td>Win Rate</td>
+                            <td class="metric-value positive">67.3%</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>Risk Analysis</h3>
+                    <canvas id="riskAnalysisChart"></canvas>
+                </div>
+
+                <div class="card">
+                    <h3>Drawdown Analysis</h3>
+                    <canvas id="drawdownChart"></canvas>
+                </div>
+
+                <div class="card">
+                    <h3>Monthly Returns Heatmap</h3>
+                    <div id="heatmap"></div>
+                </div>
+
+                <div class="card full-width">
+                    <h3>Scenario Analysis</h3>
+                    <div class="scenario-controls">
+                        <button class="btn scenario-btn" onclick="runScenario('bull')">Bull Market</button>
+                        <button class="btn scenario-btn" onclick="runScenario('bear')">Bear Market</button>
+                        <button class="btn scenario-btn" onclick="runScenario('sideways')">Sideways Market</button>
+                        <button class="btn scenario-btn" onclick="runScenario('crash')">Market Crash</button>
+                    </div>
+                    <div id="scenarioResults"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="settings" class="section">
+            <div class="section-header">
+                <h1>Platform Settings</h1>
+            </div>
+
+            <div class="settings-grid">
+                <div class="card">
+                    <h3>Data Sources</h3>
+                    <div class="form-group">
+                        <label>Default Data Provider</label>
+                        <select id="dataProvider">
+                            <option value="yahoo">Yahoo Finance</option>
+                            <option value="alpha_vantage">Alpha Vantage</option>
+                            <option value="quandl">Quandl</option>
+                            <option value="iex">IEX Cloud</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>API Keys</label>
+                        <input type="password" placeholder="Alpha Vantage API Key">
+                        <input type="password" placeholder="IEX Cloud API Key">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Risk Management</h3>
+                    <div class="form-group">
+                        <label>Maximum Portfolio Risk (%)</label>
+                        <input type="number" value="15" min="1" max="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Position Size Limit (%)</label>
+                        <input type="number" value="5" min="1" max="20">
+                    </div>
+                    <div class="form-group">
+                        <label>Stop Loss Method</label>
+                        <select>
+                            <option value="fixed">Fixed Percentage</option>
+                            <option value="atr">ATR-based</option>
+                            <option value="volatility">Volatility-based</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Execution Settings</h3>
+                    <div class="form-group">
+                        <label>Order Type</label>
+                        <select>
+                            <option value="market">Market Order</option>
+                            <option value="limit">Limit Order</option>
+                            <option value="stop">Stop Order</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Execution Delay (ms)</label>
+                        <input type="number" value="100" min="0" max="1000">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Notification Settings</h3>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="emailNotif" checked>
+                            <label for="emailNotif">Email Notifications</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="smsNotif">
+                            <label for="smsNotif">SMS Notifications</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="pushNotif" checked>
+                            <label for="pushNotif">Push Notifications</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
